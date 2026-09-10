@@ -162,7 +162,7 @@
  
 <div class="header">
   <div>
-    <div class="header-title">Monte Carlo Retirement Simulator <span style="color:var(--muted);font-size:12px;font-weight:400;">V14.1</span></div>
+    <div class="header-title">Monte Carlo Retirement Simulator <span style="color:var(--muted);font-size:12px;font-weight:400;">V15</span></div>
     <div class="header-sub">Monte Carlo — Guyton-Klinger — 10,000 Iterations — 50-Year Horizon</div>
   </div>
   <div class="header-stats" id="header-stats">
@@ -174,6 +174,7 @@
     <div>Net WR <span id="hs-netwr">3.50%</span></div>
     <div>Tax (Fed+State) <span id="hs-tax">15.0%</span></div>
     <div>Horizon <span id="hs-horizon">44 yrs (Age 45–88)</span></div>
+    <div>Supp <span id="hs-supp">—</span></div>
     <div>SS <span id="hs-ss">$35k @ Age 67</span></div>
   </div>
 </div>
@@ -202,6 +203,26 @@
       <input type="range" min="0" max="400" step="5" id="sl-suppIncome" value="0">
       <div class="slider-val" id="dv-suppIncome">$0k/yr</div>
       <div class="slider-tip">Part-time work, consulting, rental income. Directly offsets portfolio draw. Range $0–400k/yr. <span class="slider-impact impact-up">Higher = safer</span></div>
+    </div>
+    <div class="slider-wrap">
+      <div class="slider-label">Supp Income — Start Age</div>
+      <input type="range" min="40" max="80" step="1" id="sl-suppStartAge" value="44">
+      <div class="slider-val" id="dv-suppStartAge">Age 44</div>
+      <div class="slider-tip">Age the supplemental income begins. <span class="slider-impact impact-neutral">Timing</span></div>
+    </div>
+    <div class="slider-wrap">
+      <div class="slider-label">Supp Income — End Age</div>
+      <input type="range" min="45" max="105" step="1" id="sl-suppEndAge" value="105">
+      <div class="slider-val" id="dv-suppEndAge">For life</div>
+      <div class="slider-tip">Age the income stops. THIS IS THE DOMINANT ASSUMPTION. Income running 20 years scores far worse than a smaller amount running for life. Set it to what you would actually underwrite, not what you hope. <span class="slider-impact impact-down">Shorter = much worse</span></div>
+    </div>
+    <div class="toggle-wrap" style="grid-column:1/-1">
+      <div class="slider-label">Supp Income — Inflation Basis</div>
+      <div class="toggle-row">
+        <label class="toggle-switch"><input type="checkbox" id="tog-suppIndexed" onchange="toggleSuppIndexed()"><span class="toggle-slider"></span></label>
+        <span class="toggle-label" id="tog-suppIndexed-label">Fixed nominal — never rises (a note, fixed lease, your own labour)</span>
+      </div>
+      <div class="slider-tip">OFF: the amount is fixed in nominal dollars forever, so it decays in real terms — $60k is worth about $14k by age 93 at 3% inflation. ON: it resets with inflation, like market-rate rent. Same headline dollars, very different plan. <span class="slider-impact impact-up">On = far stronger</span></div>
     </div>
     <div class="slider-wrap">
       <div class="slider-label">Cash Shield <span style="color:var(--danger);font-size:9px;">↓ reduces invested portfolio</span></div>
@@ -376,19 +397,19 @@
   <div class="section-body open" id="body-s4">
     <div class="slider-wrap">
       <div class="slider-label">Preservation Trigger (% above initial WR)</div>
-      <input type="range" min="10" max="35" step="5" id="sl-gkHigh" value="20">
+      <input type="range" min="10" max="50" step="5" id="sl-gkHigh" value="20">
       <div class="slider-val" id="dv-gkHigh">+20%</div>
       <div class="slider-tip">How far your current WR must rise above your starting WR before the preservation cut fires. At 20%: if you started at 6.5% WR, the cut fires when WR hits 7.8%. <span class="slider-impact impact-up">Higher = more tolerance before cutting — less safe</span></div>
     </div>
     <div class="slider-wrap">
       <div class="slider-label">Prosperity Trigger (% below initial WR)</div>
-      <input type="range" min="10" max="35" step="5" id="sl-gkLow" value="20">
+      <input type="range" min="10" max="50" step="5" id="sl-gkLow" value="20">
       <div class="slider-val" id="dv-gkLow">-20%</div>
       <div class="slider-tip">How far your WR must fall below starting WR before you get a spending increase. At 20%: increase fires when WR drops to 5.2%. Portfolio is clearly outperforming. <span class="slider-impact impact-neutral">Higher = harder to unlock bonus spending</span></div>
     </div>
     <div class="slider-wrap">
       <div class="slider-label">Preservation Cut %</div>
-      <input type="range" min="5" max="25" step="5" id="sl-gkCut" value="10">
+      <input type="range" min="5" max="50" step="5" id="sl-gkCut" value="10">
       <div class="slider-val" id="dv-gkCut">10% spend cut</div>
       <div class="slider-tip">How much spending is cut when the preservation trigger fires. 20% cut on $130k = drop to $104k. Larger cut = more portfolio protection in bad years. <span class="slider-impact impact-up">Higher = deeper cut = safer portfolio</span></div>
     </div>
@@ -402,7 +423,7 @@
     </div>
     <div class="slider-wrap">
       <div class="slider-label">Prosperity Increase %</div>
-      <input type="range" min="5" max="25" step="5" id="sl-gkUp" value="10">
+      <input type="range" min="5" max="50" step="5" id="sl-gkUp" value="10">
       <div class="slider-val" id="dv-gkUp">10% flex increase</div>
       <div class="slider-tip">How much spending increases when the prosperity trigger fires. Reward for portfolio outperformance. Does not affect failure scenarios. <span class="slider-impact impact-neutral">Higher = more upside in good years</span></div>
     </div>
@@ -623,7 +644,7 @@
 <div class="footer">
   Log-normal returns. 10,000 paths per scenario. Mid-year withdrawal split (half pre-return, half post-return). Cash Shield drawn before equity in down years; replenishment tied to current portfolio level. SS COLA is CPI-W approximation — note: if inflation mean exceeds SS COLA, a real purchasing power leak is modeled. GK guardrails evaluated annually. Withdrawals are funded from real assets only; an unfundable draw ends the path. Age 85 = Primary checkpoint. Age 88 = Spouse terminal. Not financial advice.
   <br><br><span id="selftest">Running solvency self-test...</span>
-  <br><br>v4 fixes: (1) mid-year withdrawal timing; (2) shield replenishment threshold anchored to current portfolio; (3) peso shock label dynamic; (4) absorption default $45k/yr. v5 fixes: same as described above. v7 adds: (1) Peso toggle — disable for USD-only scenarios; (2) State tax slider separate from federal (Utah default 4.65%, SD/Mexico = 0%); (3) Supplemental income slider directly offsets portfolio draw; (4) Mortgage toggle with balance, PITI, and term — models staying in mortgaged home; (5) Full tooltip descriptors on all sliders; (6) Net WR shown in header and findings. v9 adds: (1) Scenario Manager — save, load, delete, and export named parameter sets via localStorage; (2) Mortgage corrected to 117 months; (3) Supplemental income default 0. v14.1 raises the Starting Portfolio ceiling from $5M to $10M; the Cash Shield ceiling tracks it automatically. v14 also surfaces the true gross draw in the header: the headline "WR" was spend divided by portfolio, which ignores the tax gross-up and the mortgage and therefore understated the real draw on the portfolio substantially. v14 fixes the Guyton-Klinger trigger units: the anchor withdrawal rate was computed net of tax and excluding the mortgage while the live rate was computed gross of tax and including it, so the preservation cut fired in year one of every path even in a market that never declined. The anchor is now captured inside the engine from the identical expression that builds the withdrawal. A self-test asserts no cut fires in a zero-volatility market. v13 fixes the Guyton-Klinger core floor: it was a fixed nominal amount that never inflated, so over a long horizon the guardrail could cut real spending by 70%+ and still score the path a success. The floor is now stated in today's dollars and indexed to inflation by default, with a toggle to reproduce the old nominal behavior. Adds a "Median Real Spend at End" KPI so a success bought by deep spending cuts is visible rather than hidden behind the success rate. v12 fixes a critical solvency defect: withdrawals larger than the invested sleeve were silently deleted rather than counted as depletion, which conjured up to ~50% of the lifetime draw out of nothing and reported 100% success for all-cash portfolios that were certain to fail. Withdrawals are now funded from cash and portfolio and any shortfall ends the path. Large expenditures are funded the same way. A solvency self-test runs on every page load. v11 adds: (1) Starting Portfolio displayed in millions to 3 decimals ($1.000M), step reduced to $25k; (2) Supplemental Income range extended to $400k/yr; (3) Cash Shield and Invested balance display in $k below $1M and $M to 3 decimals at/above $1M; (4) Cash Shield ceiling now tracks the Starting Portfolio and clamps automatically, so Invested can no longer go negative. v6 adds: (1) Pivot Age slider -- all chart labels, SS year, med shocks, checkpoint ages now dynamic; (2) Cash Bridge Years -- portfolio draws zero during bridge (home-sale-funded) phase; (3) Roth Conversion sliders model annual tax drag from conversions stacking on 72(t).
+  <br><br>v4 fixes: (1) mid-year withdrawal timing; (2) shield replenishment threshold anchored to current portfolio; (3) peso shock label dynamic; (4) absorption default $45k/yr. v5 fixes: same as described above. v7 adds: (1) Peso toggle — disable for USD-only scenarios; (2) State tax slider separate from federal (Utah default 4.65%, SD/Mexico = 0%); (3) Supplemental income slider directly offsets portfolio draw; (4) Mortgage toggle with balance, PITI, and term — models staying in mortgaged home; (5) Full tooltip descriptors on all sliders; (6) Net WR shown in header and findings. v9 adds: (1) Scenario Manager — save, load, delete, and export named parameter sets via localStorage; (2) Mortgage corrected to 117 months; (3) Supplemental income default 0. v15 gives supplemental income a start age, an end age and an inflation basis. Prior versions credited it every year to the end of the horizon and never inflated it, so "permanent" and "fixed nominal" were silent defaults doing enormous work: $60k running 20 years scores worse than $40k running for life. Defaults preserve the old behaviour (for life, nominal) so existing scenarios are unchanged. v14.2 raises all four Guyton-Klinger guardrail sliders to a 50% maximum (preservation trigger, prosperity trigger, preservation cut, prosperity increase). Note the prosperity increase remains capped at 1.3x base spend inside the engine, so raising it much past 30% has little effect. v14.1 raises the Starting Portfolio ceiling from $5M to $10M; the Cash Shield ceiling tracks it automatically. v14 also surfaces the true gross draw in the header: the headline "WR" was spend divided by portfolio, which ignores the tax gross-up and the mortgage and therefore understated the real draw on the portfolio substantially. v14 fixes the Guyton-Klinger trigger units: the anchor withdrawal rate was computed net of tax and excluding the mortgage while the live rate was computed gross of tax and including it, so the preservation cut fired in year one of every path even in a market that never declined. The anchor is now captured inside the engine from the identical expression that builds the withdrawal. A self-test asserts no cut fires in a zero-volatility market. v13 fixes the Guyton-Klinger core floor: it was a fixed nominal amount that never inflated, so over a long horizon the guardrail could cut real spending by 70%+ and still score the path a success. The floor is now stated in today's dollars and indexed to inflation by default, with a toggle to reproduce the old nominal behavior. Adds a "Median Real Spend at End" KPI so a success bought by deep spending cuts is visible rather than hidden behind the success rate. v12 fixes a critical solvency defect: withdrawals larger than the invested sleeve were silently deleted rather than counted as depletion, which conjured up to ~50% of the lifetime draw out of nothing and reported 100% success for all-cash portfolios that were certain to fail. Withdrawals are now funded from cash and portfolio and any shortfall ends the path. Large expenditures are funded the same way. A solvency self-test runs on every page load. v11 adds: (1) Starting Portfolio displayed in millions to 3 decimals ($1.000M), step reduced to $25k; (2) Supplemental Income range extended to $400k/yr; (3) Cash Shield and Invested balance display in $k below $1M and $M to 3 decimals at/above $1M; (4) Cash Shield ceiling now tracks the Starting Portfolio and clamps automatically, so Invested can no longer go negative. v6 adds: (1) Pivot Age slider -- all chart labels, SS year, med shocks, checkpoint ages now dynamic; (2) Cash Bridge Years -- portfolio draws zero during bridge (home-sale-funded) phase; (3) Roth Conversion sliders model annual tax drag from conversions stacking on 72(t).
 </div>
  
 <script>
@@ -640,6 +661,7 @@ const S = {
   pivotAge: 45, bridge: 1, rothAmt: 0, rothYrs: 0,
   primaryAge: 85, spouseAge: 88,
   suppIncome: 0, coreIndexed: true,
+  suppStartAge: 45, suppEndAge: 105, suppIndexed: false,
   mortgageOn: true, mortPITI: 2250, mortYrs: 117,
   absorptionOn: false,
   windfallOn: false, windfallAge: 65, windfallAmt: 200,
@@ -701,11 +723,19 @@ function runMC(p) {
     cashShield, iters, spendAddon, taxRate, absorptionYear, absorptionAmt,
     medicalShocks, gkHighPct, gkLowPct, gkCutPct, gkUpPct, coreTier, initialWR,
     bridge, rothAmt, rothYrs, checkpointYr, suppIncome, coreIndexed,
+    suppStartYr, suppEndYr, suppIndexed,
     mortgageOn, mortPITI, mortYrs,
     windfallYear, windfallAmt,
     expenditureYear, expenditureAmt,
     cashYield,
   } = p;
+ 
+  // v15: supplemental income now has a life span and an inflation basis. Absent
+  // values fall back to the pre-v15 behaviour (runs forever, fixed nominal) so
+  // older saved scenarios and the self-tests are unaffected.
+  const sStart = suppStartYr == null ? 0 : suppStartYr;
+  const sEnd   = suppEndYr   == null ? 9999 : suppEndYr;
+  const sIdx   = !!suppIndexed;
  
   const yearSamples = Array.from({ length: years }, () => []);
   const failureYears = Array(years).fill(0);
@@ -735,7 +765,11 @@ function runMC(p) {
       else { baseSpend *= (1 + inf); }
  
       let income = y >= ssStartYear ? ssBenefit * Math.pow(1 + ssCola, y - ssStartYear) : 0;
-      income += suppIncome; // supplemental income offsets draw directly
+      // Supplemental income is only credited while it is actually running, and it
+      // either holds a fixed nominal figure (a note, a fixed lease, your own labour)
+      // or rises with inflation (rent that resets). Duration dominates size:
+      // $60k for 20 years scores worse than $40k for life.
+      if (y >= sStart && y <= sEnd) income += sIdx ? suppIncome * cumInf : suppIncome;
       let extra = spendAddon + (absorptionYear >= 0 && y >= absorptionYear ? absorptionAmt : 0);
       // Mortgage: monthly P&I * 12, runs until payoff month (mortYrs = months remaining at start)
       const mortPayoffYr = mortYrs / 12;
@@ -879,6 +913,9 @@ function buildScenarios() {
     bridge: S.bridge, rothAmt: S.rothAmt * 1000, rothYrs: S.rothYrs, checkpointYr,
     suppIncome: S.suppIncome * 1000,
     coreIndexed: S.coreIndexed,
+    suppStartYr: Math.max(0, S.suppStartAge - S.pivotAge),
+    suppEndYr: S.suppEndAge >= 105 ? 9999 : (S.suppEndAge - S.pivotAge),
+    suppIndexed: S.suppIndexed,
     mortgageOn: S.mortgageOn, mortPITI: S.mortPITI, mortYrs: S.mortYrs,
     windfallYear: S.windfallOn ? (S.windfallAge - S.pivotAge) : -1,
     windfallAmt: S.windfallAmt * 1000,
@@ -1292,6 +1329,14 @@ function renderSavedList() {
 }
  
 // ── Toggle handlers ────────────────────────────────────────────────────────
+function toggleSuppIndexed() {
+  S.suppIndexed = document.getElementById('tog-suppIndexed').checked;
+  document.getElementById('tog-suppIndexed-label').textContent = S.suppIndexed
+    ? 'Rises with inflation — resets like market rent'
+    : 'Fixed nominal — never rises (a note, fixed lease, your own labour)';
+  updateHeaderStats();
+}
+ 
 function toggleCoreIndexed() {
   S.coreIndexed = document.getElementById('tog-coreIndexed').checked;
   document.getElementById('tog-coreIndexed-label').textContent = S.coreIndexed
@@ -1402,6 +1447,10 @@ function wireSliders() {
     ['rothAmt',   v => { S.rothAmt = v; return `$${v}k/yr`; }],
     ['rothYrs',   v => { S.rothYrs = parseInt(v); return `${parseInt(v)} yrs (Age ${S.pivotAge + S.bridge}–${S.pivotAge + S.bridge + parseInt(v)})`; }],
     ['suppIncome',v => { S.suppIncome = v; return v === 0 ? '$0k/yr (none)' : `$${v}k/yr (net WR reduced)`; }],
+    ['suppStartAge', v => { S.suppStartAge = parseInt(v); return `Age ${parseInt(v)}`; }],
+    ['suppEndAge',   v => { S.suppEndAge = parseInt(v);
+      const n = parseInt(v);
+      return n >= 105 ? 'For life' : `Age ${n} (${Math.max(0, n - S.suppStartAge)} yrs of income)`; }],
     ['windfallAge',     v => { S.windfallAge = parseInt(v); return `Age ${parseInt(v)} (Yr ${parseInt(v) - S.pivotAge})`; }],
     ['windfallAmt',     v => { S.windfallAmt = v; return `$${v}k`; }],
     ['expenditureAge',  v => { S.expenditureAge = parseInt(v); return `Age ${parseInt(v)} (Yr ${parseInt(v) - S.pivotAge})`; }],
@@ -1449,6 +1498,16 @@ function updateHeaderStats() {
   document.getElementById('hs-tax').textContent = effectiveTax.toFixed(2) + '%';
   document.getElementById('hs-horizon').textContent = `${simYears} yrs (Age ${S.pivotAge}–${termAge})`;
   document.getElementById('hs-ss').textContent = `$${S.ssB}k @ Age ${S.ssAge}`;
+  const se = document.getElementById('hs-supp');
+  if (se) {
+    if (!S.suppIncome) { se.textContent = 'none'; se.style.color = 'var(--muted)'; }
+    else {
+      const span = S.suppEndAge >= 105 ? 'for life' : `to age ${S.suppEndAge}`;
+      se.textContent = `$${S.suppIncome}k ${span}, ${S.suppIndexed ? 'real' : 'nominal'}`;
+      se.style.color = (S.suppEndAge >= 105 && S.suppIndexed) ? 'var(--success)'
+                      : S.suppEndAge >= 105 ? 'var(--text)' : 'var(--danger)';
+    }
+  }
 }
  
 function updateGKNote() {
@@ -1489,6 +1548,7 @@ const ALL_SLIDER_KEYS = ['portfolio','spend','suppIncome','shield','cashYield','
   'pivotAge','bridge','rothAmt','rothYrs','primaryAge','spouseAge','eqPct','eqR','eqSD',
   'bondR','bondSD','inf','infSD','ssB','ssAge','ssCola','gkHigh','gkLow','gkCut','gkUp',
   'pesoShock','med1','med2','absYr','absAmt','taxRate','stateTax','mortPITI','mortYrs',
+  'suppStartAge','suppEndAge',
   'windfallAge','windfallAmt','expenditureAge','expenditureAmt'];
  
 function syncAllFromState() {
@@ -1502,6 +1562,7 @@ function syncAllFromState() {
   setTog('tog-peso',        S.pesoOn,        updatePesoToggle);
   setTog('tog-absorption',  S.absorptionOn,  toggleAbsorption);
   setTog('tog-coreIndexed', S.coreIndexed,   toggleCoreIndexed);
+  setTog('tog-suppIndexed', S.suppIndexed,   toggleSuppIndexed);
   setTog('tog-windfall',    S.windfallOn,    toggleWindfall);
   setTog('tog-expenditure', S.expenditureOn, toggleExpenditure);
   updateHeaderStats();
@@ -1535,7 +1596,8 @@ function runSolvencySelfTest() {
       cashShield: 2e6, coreTier: 75000, gkHighPct: 20, gkLowPct: 20, gkCutPct: 20, gkUpPct: 20,
       medicalShocks: [], years: 50, iters: 400, initialWR: 0.065, spendAddon: 0, taxRate: 0.1655,
       absorptionYear: -1, absorptionAmt: 0, bridge: 3, rothAmt: 0, rothYrs: 0, checkpointYr: 39,
-      suppIncome: 0, coreIndexed: true, mortgageOn: false, mortPITI: 0, mortYrs: 0,
+      suppIncome: 0, coreIndexed: true,
+  suppStartAge: 45, suppEndAge: 105, suppIndexed: false, mortgageOn: false, mortPITI: 0, mortYrs: 0,
       windfallYear: -1, windfallAmt: 0, expenditureYear: -1, expenditureAmt: 0, cashYield: 0.045,
     });
     // Third guard: at a SUSTAINABLE withdrawal rate with zero volatility, the
@@ -1548,7 +1610,8 @@ function runSolvencySelfTest() {
       cashShield: 0, coreTier: 1000, gkHighPct: 20, gkLowPct: 20, gkCutPct: 20, gkUpPct: 0,
       medicalShocks: [], years: 30, iters: 20, initialWR: 0.03, spendAddon: 0, taxRate: 0,
       absorptionYear: -1, absorptionAmt: 0, bridge: 0, rothAmt: 0, rothYrs: 0, checkpointYr: 20,
-      suppIncome: 0, coreIndexed: true, mortgageOn: false, mortPITI: 0, mortYrs: 0,
+      suppIncome: 0, coreIndexed: true,
+  suppStartAge: 45, suppEndAge: 105, suppIndexed: false, mortgageOn: false, mortPITI: 0, mortYrs: 0,
       windfallYear: -1, windfallAmt: 0, expenditureYear: -1, expenditureAmt: 0, cashYield: 0.045,
     });
     const noSpuriousCut = r3.medianRealSpend > 60000 * 0.97;
