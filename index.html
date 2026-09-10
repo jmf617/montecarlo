@@ -162,14 +162,15 @@
 
 <div class="header">
   <div>
-    <div class="header-title">Monte Carlo Retirement Simulator <span style="color:var(--muted);font-size:12px;font-weight:400;">V11</span></div>
+    <div class="header-title">Monte Carlo Retirement Simulator <span style="color:var(--muted);font-size:12px;font-weight:400;">V14</span></div>
     <div class="header-sub">Monte Carlo — Guyton-Klinger — 10,000 Iterations — 50-Year Horizon</div>
   </div>
   <div class="header-stats" id="header-stats">
     <div>Portfolio <span id="hs-port">$1.000M</span></div>
     <div>Invested <span id="hs-invested">$1.000M</span></div>
     <div>Burn <span id="hs-burn">$130k/yr</span></div>
-    <div>WR <span id="hs-wr">10.00%</span></div>
+    <div>Spend/Portfolio <span id="hs-wr">10.00%</span></div>
+    <div>Gross draw (tax+mtg) <span id="hs-grosswr">—</span></div>
     <div>Net WR <span id="hs-netwr">3.50%</span></div>
     <div>Tax (Fed+State) <span id="hs-tax">15.0%</span></div>
     <div>Horizon <span id="hs-horizon">44 yrs (Age 45–88)</span></div>
@@ -350,7 +351,7 @@
   <div class="section-body open" id="body-s3">
     <div class="slider-wrap">
       <div class="slider-label">SS Annual Benefit ($k)</div>
-      <input type="range" min="20" max="120" step="2" id="sl-ssB" value="35">
+      <input type="range" min="0" max="120" step="1" id="sl-ssB" value="35">
       <div class="slider-val" id="dv-ssB">$35k/yr</div>
     </div>
     <div class="slider-wrap">
@@ -390,6 +391,14 @@
       <input type="range" min="5" max="25" step="5" id="sl-gkCut" value="10">
       <div class="slider-val" id="dv-gkCut">10% spend cut</div>
       <div class="slider-tip">How much spending is cut when the preservation trigger fires. 20% cut on $130k = drop to $104k. Larger cut = more portfolio protection in bad years. <span class="slider-impact impact-up">Higher = deeper cut = safer portfolio</span></div>
+    </div>
+    <div class="toggle-wrap" style="grid-column:1/-1">
+      <div class="slider-label">Core Floor Basis</div>
+      <div class="toggle-row">
+        <label class="toggle-switch"><input type="checkbox" id="tog-coreIndexed" checked onchange="toggleCoreIndexed()"><span class="toggle-slider"></span></label>
+        <span class="toggle-label" id="tog-coreIndexed-label">Real — core floor rises with inflation</span>
+      </div>
+      <div class="slider-tip">ON (correct): the protected core floor is stated in today's dollars and rises with inflation, so a $75k floor still buys $75k of goods in year 40. OFF: the floor is a fixed nominal number that never rises, so over a long horizon the guardrail can cut real spending by 70%+ and still report the plan as a success. Turning this OFF will materially raise reported success rates. It does not make the plan safer. <span class="slider-impact impact-down">Off = flattering, not safer</span></div>
     </div>
     <div class="slider-wrap">
       <div class="slider-label">Prosperity Increase %</div>
@@ -517,7 +526,7 @@
 <!-- GK Note -->
 <div class="gk-note" id="gk-note">
   <span>Guyton-Klinger Active: </span>
-  Preservation at <span id="gk-pres">7.80%</span> WR — freezes COLA + cuts <span id="gk-cut-pct">10</span>%, Core $<span id="gk-core">50</span>k/yr protected.
+  Preservation at <span id="gk-pres">7.80%</span> WR — freezes COLA + cuts <span id="gk-cut-pct">10</span>%, Core $<span id="gk-core">50</span>k/yr protected <span id="gk-basis">(real, inflation-indexed)</span>.
   Prosperity at <span id="gk-pros">5.20%</span> WR — increases Flex <span id="gk-up-pct">10</span>%.
 </div>
 
@@ -572,6 +581,11 @@
       <div class="kpi-sub" id="kpi-median83-sub">—</div>
     </div>
     <div class="kpi">
+      <div class="kpi-label">Median Real Spend at End</div>
+      <div class="kpi-value" id="kpi-realspend">—</div>
+      <div class="kpi-sub" id="kpi-realspend-sub">Today's dollars — what "success" actually bought</div>
+    </div>
+    <div class="kpi">
       <div class="kpi-label">Early Failure Yrs 1-5</div>
       <div class="kpi-value" id="kpi-early">—</div>
       <div class="kpi-sub">Sequence-of-returns kill zone</div>
@@ -607,8 +621,9 @@
 <div class="empty" id="empty-state">Configure parameters and run simulation.</div>
 
 <div class="footer">
-  Log-normal returns. 10,000 paths per scenario. Mid-year withdrawal split (half pre-return, half post-return). Cash Shield drawn before equity in down years; replenishment tied to current portfolio level. SS COLA is CPI-W approximation — note: if inflation mean exceeds SS COLA, a real purchasing power leak is modeled. GK guardrails evaluated annually. Age 85 = Primary checkpoint. Age 88 = Spouse terminal. Not financial advice.
-  <br><br>v4 fixes: (1) mid-year withdrawal timing; (2) shield replenishment threshold anchored to current portfolio; (3) peso shock label dynamic; (4) absorption default $45k/yr. v5 fixes: same as described above. v7 adds: (1) Peso toggle — disable for USD-only scenarios; (2) State tax slider separate from federal (Utah default 4.65%, SD/Mexico = 0%); (3) Supplemental income slider directly offsets portfolio draw; (4) Mortgage toggle with balance, PITI, and term — models staying in mortgaged home; (5) Full tooltip descriptors on all sliders; (6) Net WR shown in header and findings. v9 adds: (1) Scenario Manager — save, load, delete, and export named parameter sets via localStorage; (2) Mortgage corrected to 117 months; (3) Supplemental income default 0. v11 adds: (1) Starting Portfolio displayed in millions to 3 decimals ($1.000M), step reduced to $25k; (2) Supplemental Income range extended to $400k/yr; (3) Cash Shield and Invested balance display in $k below $1M and $M to 3 decimals at/above $1M; (4) Cash Shield ceiling now tracks the Starting Portfolio and clamps automatically, so Invested can no longer go negative. v6 adds: (1) Pivot Age slider -- all chart labels, SS year, med shocks, checkpoint ages now dynamic; (2) Cash Bridge Years -- portfolio draws zero during bridge (home-sale-funded) phase; (3) Roth Conversion sliders model annual tax drag from conversions stacking on 72(t).
+  Log-normal returns. 10,000 paths per scenario. Mid-year withdrawal split (half pre-return, half post-return). Cash Shield drawn before equity in down years; replenishment tied to current portfolio level. SS COLA is CPI-W approximation — note: if inflation mean exceeds SS COLA, a real purchasing power leak is modeled. GK guardrails evaluated annually. Withdrawals are funded from real assets only; an unfundable draw ends the path. Age 85 = Primary checkpoint. Age 88 = Spouse terminal. Not financial advice.
+  <br><br><span id="selftest">Running solvency self-test...</span>
+  <br><br>v4 fixes: (1) mid-year withdrawal timing; (2) shield replenishment threshold anchored to current portfolio; (3) peso shock label dynamic; (4) absorption default $45k/yr. v5 fixes: same as described above. v7 adds: (1) Peso toggle — disable for USD-only scenarios; (2) State tax slider separate from federal (Utah default 4.65%, SD/Mexico = 0%); (3) Supplemental income slider directly offsets portfolio draw; (4) Mortgage toggle with balance, PITI, and term — models staying in mortgaged home; (5) Full tooltip descriptors on all sliders; (6) Net WR shown in header and findings. v9 adds: (1) Scenario Manager — save, load, delete, and export named parameter sets via localStorage; (2) Mortgage corrected to 117 months; (3) Supplemental income default 0. v14 also surfaces the true gross draw in the header: the headline "WR" was spend divided by portfolio, which ignores the tax gross-up and the mortgage and therefore understated the real draw on the portfolio substantially. v14 fixes the Guyton-Klinger trigger units: the anchor withdrawal rate was computed net of tax and excluding the mortgage while the live rate was computed gross of tax and including it, so the preservation cut fired in year one of every path even in a market that never declined. The anchor is now captured inside the engine from the identical expression that builds the withdrawal. A self-test asserts no cut fires in a zero-volatility market. v13 fixes the Guyton-Klinger core floor: it was a fixed nominal amount that never inflated, so over a long horizon the guardrail could cut real spending by 70%+ and still score the path a success. The floor is now stated in today's dollars and indexed to inflation by default, with a toggle to reproduce the old nominal behavior. Adds a "Median Real Spend at End" KPI so a success bought by deep spending cuts is visible rather than hidden behind the success rate. v12 fixes a critical solvency defect: withdrawals larger than the invested sleeve were silently deleted rather than counted as depletion, which conjured up to ~50% of the lifetime draw out of nothing and reported 100% success for all-cash portfolios that were certain to fail. Withdrawals are now funded from cash and portfolio and any shortfall ends the path. Large expenditures are funded the same way. A solvency self-test runs on every page load. v11 adds: (1) Starting Portfolio displayed in millions to 3 decimals ($1.000M), step reduced to $25k; (2) Supplemental Income range extended to $400k/yr; (3) Cash Shield and Invested balance display in $k below $1M and $M to 3 decimals at/above $1M; (4) Cash Shield ceiling now tracks the Starting Portfolio and clamps automatically, so Invested can no longer go negative. v6 adds: (1) Pivot Age slider -- all chart labels, SS year, med shocks, checkpoint ages now dynamic; (2) Cash Bridge Years -- portfolio draws zero during bridge (home-sale-funded) phase; (3) Roth Conversion sliders model annual tax drag from conversions stacking on 72(t).
 </div>
 
 <script>
@@ -624,7 +639,7 @@ const S = {
   taxRate: 15.0, stateTax: 0.0,
   pivotAge: 45, bridge: 1, rothAmt: 0, rothYrs: 0,
   primaryAge: 85, spouseAge: 88,
-  suppIncome: 0,
+  suppIncome: 0, coreIndexed: true,
   mortgageOn: true, mortPITI: 2250, mortYrs: 117,
   absorptionOn: false,
   windfallOn: false, windfallAge: 65, windfallAmt: 200,
@@ -685,7 +700,7 @@ function runMC(p) {
     inflation, inflationSD, equityPct, years, ssStartYear, ssBenefit, ssCola,
     cashShield, iters, spendAddon, taxRate, absorptionYear, absorptionAmt,
     medicalShocks, gkHighPct, gkLowPct, gkCutPct, gkUpPct, coreTier, initialWR,
-    bridge, rothAmt, rothYrs, checkpointYr, suppIncome,
+    bridge, rothAmt, rothYrs, checkpointYr, suppIncome, coreIndexed,
     mortgageOn, mortPITI, mortYrs,
     windfallYear, windfallAmt,
     expenditureYear, expenditureAmt,
@@ -694,15 +709,28 @@ function runMC(p) {
 
   const yearSamples = Array.from({ length: years }, () => []);
   const failureYears = Array(years).fill(0);
-  let failures = 0, earlyFail = 0, bal83 = [];
+  let failures = 0, earlyFail = 0, bal83 = [], realSpendEnd = [];
 
   for (let i = 0; i < iters; i++) {
     let port = portfolio - cashShield, cash = cashShield;
     let baseSpend = annualSpend, curSpend = annualSpend;
+    // v13: the GK core floor is a REAL floor by default. A fixed nominal floor decays
+    // ~77% over a 50-year horizon at 3% inflation, which lets the guardrail "rescue"
+    // any path by cutting the retiree to poverty and still scoring it a success.
+    let coreNow = coreTier, cumInf = 1;
+    // v14: the GK anchor is captured from the SAME expression that builds `needed`,
+    // on the first year a draw actually happens. Previously `initialWR` was passed in
+    // as spend/portfolio (net of tax, excluding mortgage) while `curWR` was computed
+    // gross of tax and including mortgage, so the preservation cut fired in year one
+    // of every path regardless of market returns. A guardrail must not trigger in a
+    // market that never fell.
+    let anchorWR = null;
     let colaSusp = false, failed = false, path = [];
 
     for (let y = 0; y < years; y++) {
       const inf = Math.max(0, inflation + inflationSD * randn());
+      cumInf *= (1 + inf);
+      if (coreIndexed) coreNow *= (1 + inf);
       if (!colaSusp) { baseSpend *= (1 + inf); curSpend *= (1 + inf); }
       else { baseSpend *= (1 + inf); }
 
@@ -724,29 +752,46 @@ function runMC(p) {
 
       const totalPort = port + cash;
       const curWR = (y >= bridge && totalPort > 0) ? needed / totalPort : 0;
+      if (anchorWR === null && y >= bridge && totalPort > 0) anchorWR = curWR;
+      const aWR = anchorWR === null ? curWR : anchorWR;
 
-      if (y >= bridge && curWR > initialWR * (1 + gkHighPct / 100) && curSpend > coreTier) {
+      if (y >= bridge && curWR > aWR * (1 + gkHighPct / 100) && curSpend > coreNow) {
         colaSusp = true;
-        curSpend = Math.max(coreTier, curSpend * (1 - gkCutPct / 100));
+        curSpend = Math.max(coreNow, curSpend * (1 - gkCutPct / 100));
         needed = Math.max(0, curSpend + extra + med + mortPayment - income);
         if (taxRate > 0) needed /= (1 - taxRate);
         if (rothAmt > 0 && y < bridge + rothYrs) needed += rothAmt * taxRate;
-      } else if (y >= bridge && curWR < initialWR * (1 - gkLowPct / 100)) {
+      } else if (y >= bridge && curWR < aWR * (1 - gkLowPct / 100)) {
         colaSusp = false;
         curSpend = Math.min(curSpend * (1 + gkUpPct / 100), baseSpend * 1.3);
       } else if (y >= bridge) { colaSusp = false; }
 
       const eqR = Math.max(-0.65, equityReturn + equitySD * randn());
-      const bR = bondReturn + bondSD * randn();
+      const bR = Math.max(-0.95, bondReturn + bondSD * randn());
       const badYear = eqR < 0;
+
+      // v12 SOLVENCY FIX. Prior versions did `port -= amt; port = Math.max(0, port)`,
+      // which DELETED any withdrawal larger than the invested sleeve instead of
+      // registering depletion. With a large cash shield the invested sleeve starts
+      // near zero, so that clamp fired every year and conjured roughly half of the
+      // entire lifetime draw out of nothing -- reporting 100% success on portfolios
+      // that were in fact certain to fail.
+      //
+      // A withdrawal must now be funded by real assets. Draw from the preferred
+      // sleeve, fall back to the other, and return whatever could NOT be funded.
+      // Unmet dollars are insolvency. They are never forgiven.
+      const withdraw = (amt, cashFirst) => {
+        if (!(amt > 0)) return 0;
+        if (cashFirst && cash > 0) { const f = Math.min(cash, amt); cash -= f; amt -= f; }
+        if (port > 0) { const g = Math.min(port, amt); port -= g; amt -= g; }
+        if (amt > 0 && cash > 0) { const f = Math.min(cash, amt); cash -= f; amt -= f; }
+        return amt;
+      };
 
       // Mid-year withdrawal split: half before returns compound, half after
       // This eliminates end-of-year optimism bias
       const halfNeeded = needed / 2;
-      let preNeeded = halfNeeded;
-      if (badYear && cash > 0) { const fc = Math.min(cash, preNeeded); cash -= fc; preNeeded -= fc; }
-      if (preNeeded > 0) port -= preNeeded;
-      port = Math.max(0, port);
+      let unmet = withdraw(halfNeeded, badYear);   // down year: shield absorbs first
 
       port = port * equityPct * (1 + eqR) + port * (1 - equityPct) * (1 + bR);
       // Cash earns yield (HYSA / T-bills)
@@ -761,24 +806,23 @@ function runMC(p) {
 
       // Windfall (inheritance, life insurance) -- adds to portfolio
       if (windfallYear >= 0 && y === windfallYear) port += windfallAmt;
-      // Large expenditure -- reduces portfolio
-      if (expenditureYear >= 0 && y === expenditureYear) port = Math.max(0, port - expenditureAmt);
+      // Large expenditure -- must also be funded by real assets (same fix)
+      if (expenditureYear >= 0 && y === expenditureYear) unmet += withdraw(expenditureAmt, false);
 
-      let postNeeded = halfNeeded;
-      if (!badYear && cash > 0) { const fc = Math.min(cash, postNeeded); cash -= fc; postNeeded -= fc; }
-      if (postNeeded > 0) port -= postNeeded;
+      unmet += withdraw(halfNeeded, !badYear);     // up year: shield funds the back half
 
       const total = Math.max(0, port + cash);
       path.push(total);
       if (y === checkpointYr) bal83.push(total);
 
-      if (total <= 0 && !failed) {
-        failed = true; failures++; failureYears[y]++;
+      if ((unmet > 0 || total <= 0) && !failed) {
+        failed = true; failures++; failureYears[y]++; realSpendEnd.push(curSpend / cumInf);
         if (y < 5) earlyFail++;
         for (let ry = y + 1; ry < years; ry++) path.push(0);
         break;
       }
     }
+    if (!failed) realSpendEnd.push(curSpend / cumInf);
     while (path.length < years) path.push(path[path.length - 1] || 0);
     for (let y = 0; y < years; y++) yearSamples[y].push(path[y]);
   }
@@ -790,6 +834,8 @@ function runMC(p) {
     p90Final: pct(yearSamples[years - 1], 0.90),
     earlyFailRate: (earlyFail / iters) * 100,
     median83: pct(bal83, 0.50),
+    medianRealSpend: pct(realSpendEnd, 0.50),
+    p10RealSpend: pct(realSpendEnd, 0.10),
     p10_83: pct(bal83, 0.10),
     p10: yearSamples.map(s => pct(s, 0.10)),
     p50: yearSamples.map(s => pct(s, 0.50)),
@@ -832,6 +878,7 @@ function buildScenarios() {
     spendAddon: 0, taxRate: combinedTax, absorptionYear: -1, absorptionAmt: 0,
     bridge: S.bridge, rothAmt: S.rothAmt * 1000, rothYrs: S.rothYrs, checkpointYr,
     suppIncome: S.suppIncome * 1000,
+    coreIndexed: S.coreIndexed,
     mortgageOn: S.mortgageOn, mortPITI: S.mortPITI, mortYrs: S.mortYrs,
     windfallYear: S.windfallOn ? (S.windfallAge - S.pivotAge) : -1,
     windfallAmt: S.windfallAmt * 1000,
@@ -914,6 +961,14 @@ function renderResults() {
   km83.textContent = fmt(r.median83);
   km83.style.color = r.median83 > 1e6 ? 'var(--success)' : 'var(--accent)';
   document.getElementById('kpi-median83-sub').textContent = `Age ${checkpointAge} checkpoint / P10: ${fmt(r.p10_83)}`;
+
+  const krs = document.getElementById('kpi-realspend');
+  const rs = r.medianRealSpend || 0, startSpend = S.spend * 1000;
+  const rsPct = startSpend > 0 ? (rs / startSpend) * 100 : 0;
+  krs.textContent = fmt(rs);
+  krs.style.color = rsPct >= 85 ? 'var(--success)' : rsPct >= 60 ? 'var(--accent)' : 'var(--danger)';
+  document.getElementById('kpi-realspend-sub').textContent =
+    `${rsPct.toFixed(0)}% of starting ${fmt(startSpend)} spend, in today's dollars`;
 
   const kpiEarly = document.getElementById('kpi-early');
   kpiEarly.textContent = r.earlyFailRate.toFixed(1) + '%';
@@ -1237,6 +1292,14 @@ function renderSavedList() {
 }
 
 // ── Toggle handlers ────────────────────────────────────────────────────────
+function toggleCoreIndexed() {
+  S.coreIndexed = document.getElementById('tog-coreIndexed').checked;
+  document.getElementById('tog-coreIndexed-label').textContent = S.coreIndexed
+    ? 'Real — core floor rises with inflation'
+    : 'Nominal — floor never rises (inflates away; flatters results)';
+  updateGKNote();
+}
+
 function toggleWindfall() {
   S.windfallOn = document.getElementById('tog-windfall').checked;
   const inputs = document.getElementById('windfall-inputs');
@@ -1371,6 +1434,17 @@ function updateHeaderStats() {
   document.getElementById('hs-invested').textContent = fmtKM(S.portfolio - S.shield);
   document.getElementById('hs-burn').textContent = `$${S.spend}k/yr`;
   document.getElementById('hs-wr').textContent = (wr * 100).toFixed(2) + '%';
+  // The rate that actually hits the portfolio: spend grossed up for tax, plus mortgage,
+  // net of supplemental income. This is the number the guardrail triggers on.
+  const taxFrac = (S.taxRate + S.stateTax) / 100;
+  const grossNeed = Math.max(0, S.spend * 1000 + (S.mortgageOn ? S.mortPITI * 12 : 0)
+                    - S.suppIncome * 1000) / (1 - taxFrac);
+  const gwr = grossNeed / (S.portfolio * 1000);
+  const gEl = document.getElementById('hs-grosswr');
+  if (gEl) {
+    gEl.textContent = (gwr * 100).toFixed(2) + '% (' + fmt(grossNeed) + ')';
+    gEl.style.color = gwr > 0.055 ? 'var(--danger)' : gwr > 0.045 ? 'var(--accent)' : 'var(--success)';
+  }
   document.getElementById('hs-netwr').textContent = (netWR * 100).toFixed(2) + '%';
   document.getElementById('hs-tax').textContent = effectiveTax.toFixed(2) + '%';
   document.getElementById('hs-horizon').textContent = `${simYears} yrs (Age ${S.pivotAge}–${termAge})`;
@@ -1378,7 +1452,12 @@ function updateHeaderStats() {
 }
 
 function updateGKNote() {
-  const wr = (S.spend * 1000) / (S.portfolio * 1000);
+  // Show the anchor on the same gross-of-tax, mortgage-inclusive basis the engine uses,
+  // so the displayed trigger points match the ones that actually fire.
+  const tax = (S.taxRate + S.stateTax) / 100;
+  const grossNeed = Math.max(0, S.spend * 1000 + (S.mortgageOn ? S.mortPITI * 12 : 0)
+                     - S.suppIncome * 1000) / (1 - tax);
+  const wr = grossNeed / (S.portfolio * 1000);
   const presWR = (wr * (1 + S.gkHigh / 100) * 100).toFixed(2);
   const prosWR = (wr * (1 - S.gkLow / 100) * 100).toFixed(2);
   document.getElementById('gk-pres').textContent = presWR + '%';
@@ -1386,6 +1465,8 @@ function updateGKNote() {
   document.getElementById('gk-cut-pct').textContent = S.gkCut;
   document.getElementById('gk-core').textContent = S.core;
   document.getElementById('gk-up-pct').textContent = S.gkUp;
+  const gb = document.getElementById('gk-basis');
+  if (gb) gb.textContent = S.coreIndexed ? '(real, inflation-indexed)' : '(NOMINAL — decays with inflation)';
 }
 
 // ── Section toggles ────────────────────────────────────────────────────────
@@ -1402,11 +1483,92 @@ document.querySelectorAll('.scenario-tab').forEach(btn => {
 });
 
 // ── Init ───────────────────────────────────────────────────────────────────
+// Every control is driven from the S object below, so a preset variant of this
+// file only has to change S -- the markup never needs to be kept in sync by hand.
+const ALL_SLIDER_KEYS = ['portfolio','spend','suppIncome','shield','cashYield','core',
+  'pivotAge','bridge','rothAmt','rothYrs','primaryAge','spouseAge','eqPct','eqR','eqSD',
+  'bondR','bondSD','inf','infSD','ssB','ssAge','ssCola','gkHigh','gkLow','gkCut','gkUp',
+  'pesoShock','med1','med2','absYr','absAmt','taxRate','stateTax','mortPITI','mortYrs',
+  'windfallAge','windfallAmt','expenditureAge','expenditureAmt'];
+
+function syncAllFromState() {
+  syncShieldMax();
+  ALL_SLIDER_KEYS.forEach(k => {
+    const el = document.getElementById('sl-' + k);
+    if (el && S[k] !== undefined) { el.value = S[k]; el.dispatchEvent(new Event('input')); }
+  });
+  const setTog = (id, on, fn) => { const e = document.getElementById(id); if (e) { e.checked = !!on; fn(); } };
+  setTog('tog-mortgage',    S.mortgageOn,    toggleMortgage);
+  setTog('tog-peso',        S.pesoOn,        updatePesoToggle);
+  setTog('tog-absorption',  S.absorptionOn,  toggleAbsorption);
+  setTog('tog-coreIndexed', S.coreIndexed,   toggleCoreIndexed);
+  setTog('tog-windfall',    S.windfallOn,    toggleWindfall);
+  setTog('tog-expenditure', S.expenditureOn, toggleExpenditure);
+  updateHeaderStats();
+  updateGKNote();
+}
+
+// ── Solvency regression guard ──────────────────────────────────────────────
+// The v12 fix corrected an engine defect that reported 100% success for an
+// all-cash portfolio that was certain to fail. This runs that exact pathological
+// case on every page load. An all-cash portfolio yielding 4.5% nominal against a
+// 10% initial withdrawal rate and 3% inflation MUST fail. If it ever reports a
+// high success rate again, the defect has been reintroduced and the page says so.
+function runSolvencySelfTest() {
+  try {
+    const r = runMC({
+      portfolio: 1e6, annualSpend: 1e5, equityPct: 0.8, equityReturn: 0.085, equitySD: 0.16,
+      bondReturn: 0.04, bondSD: 0.05, inflation: 0.03, inflationSD: 0.015,
+      ssBenefit: 0, ssStartYear: 999, ssCola: 0.025,
+      cashShield: 1e6, coreTier: 50000, gkHighPct: 20, gkLowPct: 20, gkCutPct: 10, gkUpPct: 10,
+      medicalShocks: [], years: 40, iters: 400, initialWR: 0.10, spendAddon: 0, taxRate: 0.15,
+      absorptionYear: -1, absorptionAmt: 0, bridge: 0, rothAmt: 0, rothYrs: 0, checkpointYr: 30,
+      suppIncome: 0, mortgageOn: false, mortPITI: 0, mortYrs: 0,
+      windfallYear: -1, windfallAmt: 0, expenditureYear: -1, expenditureAmt: 0, cashYield: 0.045,
+    });
+    // Second guard: with a REAL core floor, an all-cash $2M funding $130k/yr for 50
+    // years must also fail. This catches a nominal floor silently coming back.
+    const r2 = runMC({
+      portfolio: 2e6, annualSpend: 130000, equityPct: 0.8, equityReturn: 0.085, equitySD: 0.16,
+      bondReturn: 0.04, bondSD: 0.05, inflation: 0.03, inflationSD: 0.015,
+      ssBenefit: 46000, ssStartYear: 18, ssCola: 0.025,
+      cashShield: 2e6, coreTier: 75000, gkHighPct: 20, gkLowPct: 20, gkCutPct: 20, gkUpPct: 20,
+      medicalShocks: [], years: 50, iters: 400, initialWR: 0.065, spendAddon: 0, taxRate: 0.1655,
+      absorptionYear: -1, absorptionAmt: 0, bridge: 3, rothAmt: 0, rothYrs: 0, checkpointYr: 39,
+      suppIncome: 0, coreIndexed: true, mortgageOn: false, mortPITI: 0, mortYrs: 0,
+      windfallYear: -1, windfallAmt: 0, expenditureYear: -1, expenditureAmt: 0, cashYield: 0.045,
+    });
+    // Third guard: at a SUSTAINABLE withdrawal rate with zero volatility, the
+    // guardrail must never cut. (At an unsustainable rate it should cut, so the
+    // control has to be a sustainable one or the test asserts the wrong thing.)
+    const r3 = runMC({
+      portfolio: 2e6, annualSpend: 60000, equityPct: 0.8, equityReturn: 0.085, equitySD: 0,
+      bondReturn: 0.04, bondSD: 0, inflation: 0.03, inflationSD: 0,
+      ssBenefit: 0, ssStartYear: 999, ssCola: 0.025,
+      cashShield: 0, coreTier: 1000, gkHighPct: 20, gkLowPct: 20, gkCutPct: 20, gkUpPct: 0,
+      medicalShocks: [], years: 30, iters: 20, initialWR: 0.03, spendAddon: 0, taxRate: 0,
+      absorptionYear: -1, absorptionAmt: 0, bridge: 0, rothAmt: 0, rothYrs: 0, checkpointYr: 20,
+      suppIncome: 0, coreIndexed: true, mortgageOn: false, mortPITI: 0, mortYrs: 0,
+      windfallYear: -1, windfallAmt: 0, expenditureYear: -1, expenditureAmt: 0, cashYield: 0.045,
+    });
+    const noSpuriousCut = r3.medianRealSpend > 60000 * 0.97;
+    const ok = r.successRate < 5 && r2.successRate < 50 && noSpuriousCut;
+    const el = document.getElementById('selftest');
+    if (el) {
+      el.textContent = ok
+        ? `Self-tests PASS — solvency ${r.successRate.toFixed(1)}% (<5%), real-floor ${r2.successRate.toFixed(1)}% (<50%), no-spurious-cut ${(r3.medianRealSpend/1000).toFixed(0)}k (~60k)`
+        : `SELF-TEST FAILED — solvency ${r.successRate.toFixed(1)}%, real-floor ${r2.successRate.toFixed(1)}%, no-spurious-cut ${(r3.medianRealSpend/1000).toFixed(0)}k. Results are not trustworthy.`;
+      el.style.color = ok ? 'var(--muted)' : 'var(--danger)';
+      if (!ok) el.style.fontWeight = '700';
+    }
+    console[ok ? 'log' : 'error']('[MC] self-tests', ok ? 'PASS' : 'FAIL', 'solvency', r.successRate.toFixed(2) + '%', 'realfloor', r2.successRate.toFixed(2) + '%', 'nocut', (r3.medianRealSpend/1000).toFixed(1) + 'k');
+  } catch (e) { console.error('[MC] self-test error', e); }
+}
+
 wireSliders();
-syncShieldMax();
-updateHeaderStats();
-updateGKNote();
+syncAllFromState();
 renderSavedList();
+runSolvencySelfTest();
 </script>
 </body>
 </html>
