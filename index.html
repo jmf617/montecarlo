@@ -6,7 +6,7 @@
 <title>Monte Carlo Retirement Simulator</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+ 
   :root {
     --bg: #09090b;
     --surface: #0f1013;
@@ -20,7 +20,7 @@
     --muted: #c0c8d8;
     --card: #0d0f13;
   }
-
+ 
   body {
     background: var(--bg);
     color: var(--text);
@@ -29,7 +29,7 @@
     min-height: 100vh;
     padding: 24px 16px 40px;
   }
-
+ 
   /* Header */
   .header {
     display: flex;
@@ -45,7 +45,7 @@
   .header-sub { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
   .header-stats { text-align: right; color: var(--muted); font-size: 10px; line-height: 1.9; }
   .header-stats span { color: var(--text); }
-
+ 
   /* Sections */
   .section { background: var(--card); border: 1px solid var(--border); border-radius: 3px; margin-bottom: 8px; overflow: hidden; }
   .section-header { display: flex; justify-content: space-between; align-items: center; padding: 9px 14px; cursor: pointer; user-select: none; }
@@ -55,42 +55,42 @@
   .section-arrow.open { transform: rotate(180deg); }
   .section-body { display: none; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; padding: 14px; border-top: 1px solid var(--border); }
   .section-body.open { display: grid; }
-
+ 
   /* Sliders */
   .slider-wrap { display: flex; flex-direction: column; }
   .slider-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 5px; }
   .slider-wrap input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
   .slider-val { color: var(--accent); font-size: 12px; margin-top: 3px; font-weight: 500; }
-
+ 
   /* GK Note */
   .gk-note { background: var(--card); border: 1px solid var(--accent-dim); border-radius: 3px; padding: 10px 14px; margin-bottom: 14px; font-size: 10px; color: var(--muted); line-height: 1.7; }
   .gk-note span { color: var(--accent); }
-
+ 
   /* Scenario tabs */
   .scenario-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
   .scenario-tab { padding: 6px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 2px; color: var(--muted); cursor: pointer; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 400; font-family: inherit; transition: all 0.15s; }
   .scenario-tab.active { background: var(--accent); border-color: var(--accent); color: #09090b; font-weight: 500; }
-
+ 
   /* Run button */
   #run-btn { padding: 9px 22px; background: var(--accent); color: #09090b; border: none; border-radius: 2px; font-family: monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; margin-bottom: 20px; transition: opacity 0.15s; }
   #run-btn:disabled { background: var(--muted); opacity: 0.5; cursor: not-allowed; }
-
+ 
   /* Progress */
   .progress-bar { width: 100%; height: 1px; background: var(--border); margin-bottom: 16px; display: none; }
   .progress-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.1s; }
-
+ 
   /* KPIs */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
   .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 3px; padding: 14px; }
   .kpi-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 7px; }
   .kpi-value { font-size: 26px; font-weight: 700; line-height: 1; color: var(--text); }
   .kpi-sub { font-size: 9px; color: var(--muted); margin-top: 5px; }
-
+ 
   /* Charts */
   .chart-box { background: var(--card); border: 1px solid var(--border); border-radius: 3px; padding: 16px; margin-bottom: 12px; }
   .chart-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 12px; }
   canvas { width: 100%; display: block; }
-
+ 
   /* Findings */
   .findings { background: var(--card); border: 1px solid var(--border); border-radius: 3px; padding: 16px; margin-bottom: 12px; }
   .findings-title { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 10px; }
@@ -98,7 +98,7 @@
   .finding-row:last-child { border-bottom: none; }
   .finding-key { color: var(--muted); font-size: 10px; flex: 1; }
   .finding-val { font-size: 11px; font-weight: 500; white-space: nowrap; }
-
+ 
   /* Scenario comparison */
   .comparison-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
   .comparison-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
@@ -107,10 +107,10 @@
   .comp-card-name { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
   .comp-card-pct { font-size: 20px; font-weight: 700; margin-bottom: 3px; }
   .comp-card-detail { font-size: 9px; color: var(--muted); line-height: 1.6; }
-
+ 
   /* Empty state */
   .empty { text-align: center; padding: 48px; color: var(--muted); font-size: 11px; letter-spacing: 0.1em; display: none; }
-
+ 
   /* Tooltips */
   .slider-wrap { position: relative; }
   .slider-tip { font-size: 8px; color: var(--muted); margin-top: 2px; line-height: 1.4; font-style: italic; }
@@ -118,7 +118,7 @@
   .impact-up { color: var(--success); }
   .impact-down { color: var(--danger); }
   .impact-neutral { color: var(--accent); }
-
+ 
   /* Toggle switch */
   .toggle-wrap { display: flex; flex-direction: column; }
   .toggle-row { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
@@ -129,7 +129,7 @@
   input:checked + .toggle-slider { background: var(--accent-dim); }
   input:checked + .toggle-slider:before { transform: translateX(18px); background: var(--accent); }
   .toggle-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
-
+ 
   /* Footer */
   .footer { border-top: 1px solid var(--border); padding-top: 14px; margin-top: 20px; font-size: 9px; color: var(--muted); line-height: 1.7; text-transform: uppercase; letter-spacing: 0.06em; }
   /* Scenario Manager */
@@ -148,21 +148,21 @@
   .saved-item-meta { font-size: 8px; color: var(--muted); white-space: nowrap; }
   .saved-item-btns { display: flex; gap: 4px; }
   .saved-empty { font-size: 9px; color: var(--muted); text-align: center; padding: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
-
+ 
   #results-area { display: none; }
   #empty-state { display: block; }
 </style>
 </head>
 <body>
-
+ 
 <div style="background:#1a1010; border:1px solid var(--danger); border-radius:3px; padding:10px 14px; margin-bottom:16px; font-size:10px; line-height:1.6; color:var(--muted);">
   <strong style="color:var(--danger); text-transform:uppercase; letter-spacing:0.08em; font-size:9px;">Disclaimer:</strong>
   Not financial, tax, or legal advice. This is a personal educational tool built to explore hypothetical retirement scenarios — not a recommendation, forecast, or guarantee of any outcome. All results depend on assumptions you set (returns, inflation, spending, taxes, etc.) and randomized simulation; real markets and real life do not follow these models. Do not make retirement, investment, or withdrawal decisions based solely on this tool. Consult a licensed financial advisor, CPA, and/or attorney for advice specific to your situation. Provided "as is," with no warranty of accuracy. Use at your own risk.
 </div>
-
+ 
 <div class="header">
   <div>
-    <div class="header-title">Monte Carlo Retirement Simulator <span style="color:var(--muted);font-size:12px;font-weight:400;">V14</span></div>
+    <div class="header-title">Monte Carlo Retirement Simulator <span style="color:var(--muted);font-size:12px;font-weight:400;">V14.1</span></div>
     <div class="header-sub">Monte Carlo — Guyton-Klinger — 10,000 Iterations — 50-Year Horizon</div>
   </div>
   <div class="header-stats" id="header-stats">
@@ -177,7 +177,7 @@
     <div>SS <span id="hs-ss">$35k @ Age 67</span></div>
   </div>
 </div>
-
+ 
 <!-- Section 1: Capital & Spending -->
 <div class="section">
   <div class="section-header" onclick="toggleSection('s1')">
@@ -186,10 +186,10 @@
   </div>
   <div class="section-body open" id="body-s1">
     <div class="slider-wrap">
-      <div class="slider-label">Starting Portfolio ($M)</div>
-      <input type="range" min="1000" max="5000" step="25" id="sl-portfolio" value="1000">
+      <div class="slider-label">Starting Portfolio ($M) <span style="color:var(--muted);font-size:9px;">$1.000M &ndash; $10.000M</span></div>
+      <input type="range" min="1000" max="10000" step="25" id="sl-portfolio" value="1000">
       <div class="slider-val" id="dv-portfolio">$1.000M</div>
-      <div class="slider-tip">Total investable assets at retirement start. <span class="slider-impact impact-up">Higher = safer</span></div>
+      <div class="slider-tip">Total investable assets at retirement start. Range $1M to $10M in $25k steps. <span class="slider-impact impact-up">Higher = safer</span></div>
     </div>
     <div class="slider-wrap">
       <div class="slider-label">Annual Spend ($k)</div>
@@ -223,7 +223,7 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- Section 1b: Life Stage -->
 <div class="section">
   <div class="section-header" onclick="toggleSection('s1b')">
@@ -341,7 +341,7 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- Section 3: Social Security -->
 <div class="section">
   <div class="section-header" onclick="toggleSection('s3')">
@@ -366,7 +366,7 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- Section 4: GK -->
 <div class="section">
   <div class="section-header" onclick="toggleSection('s4')">
@@ -408,7 +408,7 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- Section 5: Stress -->
 <div class="section">
   <div class="section-header" onclick="toggleSection('s5')">
@@ -522,14 +522,14 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- GK Note -->
 <div class="gk-note" id="gk-note">
   <span>Guyton-Klinger Active: </span>
   Preservation at <span id="gk-pres">7.80%</span> WR — freezes COLA + cuts <span id="gk-cut-pct">10</span>%, Core $<span id="gk-core">50</span>k/yr protected <span id="gk-basis">(real, inflation-indexed)</span>.
   Prosperity at <span id="gk-pros">5.20%</span> WR — increases Flex <span id="gk-up-pct">10</span>%.
 </div>
-
+ 
 <!-- Scenario tabs -->
 <div class="scenario-tabs" id="scenario-tabs">
   <button class="scenario-tab active" data-scenario="base">Base Case</button>
@@ -539,7 +539,7 @@
   <button class="scenario-tab" data-scenario="absorption">Parent Absorption</button>
   <button class="scenario-tab" data-scenario="combined">Combined Stress</button>
 </div>
-
+ 
 <!-- Scenario Manager -->
 <div class="scenario-mgr">
   <div class="scenario-mgr-title">Scenario Manager — Save & Load Parameter Sets</div>
@@ -552,15 +552,15 @@
     <div class="saved-empty" id="saved-empty">No saved scenarios yet.</div>
   </div>
 </div>
-
+ 
 <!-- Run button -->
 <button id="run-btn" onclick="runAll()">Run Simulation</button>
-
+ 
 <!-- Progress bar -->
 <div class="progress-bar" id="progress-bar">
   <div class="progress-fill" id="progress-fill"></div>
 </div>
-
+ 
 <!-- Results area -->
 <div id="results-area">
   <!-- KPIs -->
@@ -591,41 +591,41 @@
       <div class="kpi-sub">Sequence-of-returns kill zone</div>
     </div>
   </div>
-
+ 
   <!-- Fan chart -->
   <div class="chart-box">
     <div class="chart-label" id="fan-label">Portfolio Fan — P10 / Median / P90 | Gold dashed: SS | Blue dashed: Age 83</div>
     <canvas id="fan-canvas" height="280"></canvas>
   </div>
-
+ 
   <!-- Histogram -->
   <div class="chart-box">
     <div class="chart-label">Failure Distribution by Age of Depletion</div>
     <canvas id="hist-canvas" height="120"></canvas>
   </div>
-
+ 
   <!-- Findings -->
   <div class="findings">
     <div class="findings-title" id="findings-title">Key Findings</div>
     <div id="findings-rows"></div>
   </div>
-
+ 
   <!-- Scenario comparison -->
   <div id="comparison-area" style="display:none;">
     <div class="comparison-label">Scenario Comparison</div>
     <div class="comparison-grid" id="comparison-grid"></div>
   </div>
 </div>
-
+ 
 <!-- Empty state -->
 <div class="empty" id="empty-state">Configure parameters and run simulation.</div>
-
+ 
 <div class="footer">
   Log-normal returns. 10,000 paths per scenario. Mid-year withdrawal split (half pre-return, half post-return). Cash Shield drawn before equity in down years; replenishment tied to current portfolio level. SS COLA is CPI-W approximation — note: if inflation mean exceeds SS COLA, a real purchasing power leak is modeled. GK guardrails evaluated annually. Withdrawals are funded from real assets only; an unfundable draw ends the path. Age 85 = Primary checkpoint. Age 88 = Spouse terminal. Not financial advice.
   <br><br><span id="selftest">Running solvency self-test...</span>
-  <br><br>v4 fixes: (1) mid-year withdrawal timing; (2) shield replenishment threshold anchored to current portfolio; (3) peso shock label dynamic; (4) absorption default $45k/yr. v5 fixes: same as described above. v7 adds: (1) Peso toggle — disable for USD-only scenarios; (2) State tax slider separate from federal (Utah default 4.65%, SD/Mexico = 0%); (3) Supplemental income slider directly offsets portfolio draw; (4) Mortgage toggle with balance, PITI, and term — models staying in mortgaged home; (5) Full tooltip descriptors on all sliders; (6) Net WR shown in header and findings. v9 adds: (1) Scenario Manager — save, load, delete, and export named parameter sets via localStorage; (2) Mortgage corrected to 117 months; (3) Supplemental income default 0. v14 also surfaces the true gross draw in the header: the headline "WR" was spend divided by portfolio, which ignores the tax gross-up and the mortgage and therefore understated the real draw on the portfolio substantially. v14 fixes the Guyton-Klinger trigger units: the anchor withdrawal rate was computed net of tax and excluding the mortgage while the live rate was computed gross of tax and including it, so the preservation cut fired in year one of every path even in a market that never declined. The anchor is now captured inside the engine from the identical expression that builds the withdrawal. A self-test asserts no cut fires in a zero-volatility market. v13 fixes the Guyton-Klinger core floor: it was a fixed nominal amount that never inflated, so over a long horizon the guardrail could cut real spending by 70%+ and still score the path a success. The floor is now stated in today's dollars and indexed to inflation by default, with a toggle to reproduce the old nominal behavior. Adds a "Median Real Spend at End" KPI so a success bought by deep spending cuts is visible rather than hidden behind the success rate. v12 fixes a critical solvency defect: withdrawals larger than the invested sleeve were silently deleted rather than counted as depletion, which conjured up to ~50% of the lifetime draw out of nothing and reported 100% success for all-cash portfolios that were certain to fail. Withdrawals are now funded from cash and portfolio and any shortfall ends the path. Large expenditures are funded the same way. A solvency self-test runs on every page load. v11 adds: (1) Starting Portfolio displayed in millions to 3 decimals ($1.000M), step reduced to $25k; (2) Supplemental Income range extended to $400k/yr; (3) Cash Shield and Invested balance display in $k below $1M and $M to 3 decimals at/above $1M; (4) Cash Shield ceiling now tracks the Starting Portfolio and clamps automatically, so Invested can no longer go negative. v6 adds: (1) Pivot Age slider -- all chart labels, SS year, med shocks, checkpoint ages now dynamic; (2) Cash Bridge Years -- portfolio draws zero during bridge (home-sale-funded) phase; (3) Roth Conversion sliders model annual tax drag from conversions stacking on 72(t).
+  <br><br>v4 fixes: (1) mid-year withdrawal timing; (2) shield replenishment threshold anchored to current portfolio; (3) peso shock label dynamic; (4) absorption default $45k/yr. v5 fixes: same as described above. v7 adds: (1) Peso toggle — disable for USD-only scenarios; (2) State tax slider separate from federal (Utah default 4.65%, SD/Mexico = 0%); (3) Supplemental income slider directly offsets portfolio draw; (4) Mortgage toggle with balance, PITI, and term — models staying in mortgaged home; (5) Full tooltip descriptors on all sliders; (6) Net WR shown in header and findings. v9 adds: (1) Scenario Manager — save, load, delete, and export named parameter sets via localStorage; (2) Mortgage corrected to 117 months; (3) Supplemental income default 0. v14.1 raises the Starting Portfolio ceiling from $5M to $10M; the Cash Shield ceiling tracks it automatically. v14 also surfaces the true gross draw in the header: the headline "WR" was spend divided by portfolio, which ignores the tax gross-up and the mortgage and therefore understated the real draw on the portfolio substantially. v14 fixes the Guyton-Klinger trigger units: the anchor withdrawal rate was computed net of tax and excluding the mortgage while the live rate was computed gross of tax and including it, so the preservation cut fired in year one of every path even in a market that never declined. The anchor is now captured inside the engine from the identical expression that builds the withdrawal. A self-test asserts no cut fires in a zero-volatility market. v13 fixes the Guyton-Klinger core floor: it was a fixed nominal amount that never inflated, so over a long horizon the guardrail could cut real spending by 70%+ and still score the path a success. The floor is now stated in today's dollars and indexed to inflation by default, with a toggle to reproduce the old nominal behavior. Adds a "Median Real Spend at End" KPI so a success bought by deep spending cuts is visible rather than hidden behind the success rate. v12 fixes a critical solvency defect: withdrawals larger than the invested sleeve were silently deleted rather than counted as depletion, which conjured up to ~50% of the lifetime draw out of nothing and reported 100% success for all-cash portfolios that were certain to fail. Withdrawals are now funded from cash and portfolio and any shortfall ends the path. Large expenditures are funded the same way. A solvency self-test runs on every page load. v11 adds: (1) Starting Portfolio displayed in millions to 3 decimals ($1.000M), step reduced to $25k; (2) Supplemental Income range extended to $400k/yr; (3) Cash Shield and Invested balance display in $k below $1M and $M to 3 decimals at/above $1M; (4) Cash Shield ceiling now tracks the Starting Portfolio and clamps automatically, so Invested can no longer go negative. v6 adds: (1) Pivot Age slider -- all chart labels, SS year, med shocks, checkpoint ages now dynamic; (2) Cash Bridge Years -- portfolio draws zero during bridge (home-sale-funded) phase; (3) Roth Conversion sliders model annual tax drag from conversions stacking on 72(t).
 </div>
-
+ 
 <script>
 // ── State ──────────────────────────────────────────────────────────────────
 const S = {
@@ -645,16 +645,16 @@ const S = {
   windfallOn: false, windfallAge: 65, windfallAmt: 200,
   expenditureOn: false, expenditureAge: 55, expenditureAmt: 100,
 };
-
+ 
 const SCENARIO_NAMES = {
   base: "Base Case", conservative: "Conservative 7%",
   peso: "Peso Shock", tax: "Tax Stress (+10pp)",
   absorption: "Parent Absorption", combined: "Combined Stress",
 };
-
+ 
 let scenario = "base";
 let allResults = {};
-
+ 
 // ── Helpers ────────────────────────────────────────────────────────────────
 function randn() {
   let u = 0, v = 0;
@@ -662,18 +662,18 @@ function randn() {
   while (!v) v = Math.random();
   return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 }
-
+ 
 function fmt(n) {
   if (!n && n !== 0) return "N/A";
   if (n >= 1e6) return "$" + (n / 1e6).toFixed(2) + "M";
   if (n >= 1e3) return "$" + Math.round(n / 1000) + "k";
   return "$" + Math.round(n);
 }
-
+ 
 function pClass(p) {
   return p >= 90 ? 'var(--success)' : p >= 80 ? 'var(--accent)' : 'var(--danger)';
 }
-
+ 
 // Display formatters for $k-denominated state values.
 // fmtKM: shows k under $1M, M with 3 decimals at/above $1M.
 function fmtKM(k) {
@@ -687,12 +687,12 @@ function fmtMM(k) {
   if (!isFinite(n)) return "$0.000M";
   return `$${(n / 1000).toFixed(3)}M`;
 }
-
+ 
 function pct(arr, p) {
   const s = arr.slice().sort((a, b) => a - b);
   return s[Math.floor(s.length * p)] || 0;
 }
-
+ 
 // ── Monte Carlo engine ─────────────────────────────────────────────────────
 function runMC(p) {
   const {
@@ -706,11 +706,11 @@ function runMC(p) {
     expenditureYear, expenditureAmt,
     cashYield,
   } = p;
-
+ 
   const yearSamples = Array.from({ length: years }, () => []);
   const failureYears = Array(years).fill(0);
   let failures = 0, earlyFail = 0, bal83 = [], realSpendEnd = [];
-
+ 
   for (let i = 0; i < iters; i++) {
     let port = portfolio - cashShield, cash = cashShield;
     let baseSpend = annualSpend, curSpend = annualSpend;
@@ -726,14 +726,14 @@ function runMC(p) {
     // market that never fell.
     let anchorWR = null;
     let colaSusp = false, failed = false, path = [];
-
+ 
     for (let y = 0; y < years; y++) {
       const inf = Math.max(0, inflation + inflationSD * randn());
       cumInf *= (1 + inf);
       if (coreIndexed) coreNow *= (1 + inf);
       if (!colaSusp) { baseSpend *= (1 + inf); curSpend *= (1 + inf); }
       else { baseSpend *= (1 + inf); }
-
+ 
       let income = y >= ssStartYear ? ssBenefit * Math.pow(1 + ssCola, y - ssStartYear) : 0;
       income += suppIncome; // supplemental income offsets draw directly
       let extra = spendAddon + (absorptionYear >= 0 && y >= absorptionYear ? absorptionAmt : 0);
@@ -741,7 +741,7 @@ function runMC(p) {
       const mortPayoffYr = mortYrs / 12;
       const mortPayment = (mortgageOn && y < mortPayoffYr) ? mortPITI * 12 : 0;
       let med = medicalShocks.reduce((s, ms) => ms.year === y ? s + ms.amount : s, 0);
-
+ 
       // Cash bridge: external funds cover spending; no portfolio draw
       let needed = 0;
       if (y >= bridge) {
@@ -749,12 +749,12 @@ function runMC(p) {
         if (taxRate > 0) needed /= (1 - taxRate);
         if (rothAmt > 0 && y < bridge + rothYrs) needed += rothAmt * taxRate;
       }
-
+ 
       const totalPort = port + cash;
       const curWR = (y >= bridge && totalPort > 0) ? needed / totalPort : 0;
       if (anchorWR === null && y >= bridge && totalPort > 0) anchorWR = curWR;
       const aWR = anchorWR === null ? curWR : anchorWR;
-
+ 
       if (y >= bridge && curWR > aWR * (1 + gkHighPct / 100) && curSpend > coreNow) {
         colaSusp = true;
         curSpend = Math.max(coreNow, curSpend * (1 - gkCutPct / 100));
@@ -765,11 +765,11 @@ function runMC(p) {
         colaSusp = false;
         curSpend = Math.min(curSpend * (1 + gkUpPct / 100), baseSpend * 1.3);
       } else if (y >= bridge) { colaSusp = false; }
-
+ 
       const eqR = Math.max(-0.65, equityReturn + equitySD * randn());
       const bR = Math.max(-0.95, bondReturn + bondSD * randn());
       const badYear = eqR < 0;
-
+ 
       // v12 SOLVENCY FIX. Prior versions did `port -= amt; port = Math.max(0, port)`,
       // which DELETED any withdrawal larger than the invested sleeve instead of
       // registering depletion. With a large cash shield the invested sleeve starts
@@ -787,34 +787,34 @@ function runMC(p) {
         if (amt > 0 && cash > 0) { const f = Math.min(cash, amt); cash -= f; amt -= f; }
         return amt;
       };
-
+ 
       // Mid-year withdrawal split: half before returns compound, half after
       // This eliminates end-of-year optimism bias
       const halfNeeded = needed / 2;
       let unmet = withdraw(halfNeeded, badYear);   // down year: shield absorbs first
-
+ 
       port = port * equityPct * (1 + eqR) + port * (1 - equityPct) * (1 + bR);
       // Cash earns yield (HYSA / T-bills)
       cash *= (1 + cashYield);
-
+ 
       // Replenish shield only in positive years and only when portfolio exceeds
       // current_portfolio * 0.65 (current, not original) to avoid decayed-anchor trap
       const currentTotal = port + cash;
       if (!badYear && cash < cashShield && currentTotal > currentTotal * 0.65 + cashShield) {
         const rep = Math.min(cashShield - cash, port * 0.04); port -= rep; cash += rep;
       }
-
+ 
       // Windfall (inheritance, life insurance) -- adds to portfolio
       if (windfallYear >= 0 && y === windfallYear) port += windfallAmt;
       // Large expenditure -- must also be funded by real assets (same fix)
       if (expenditureYear >= 0 && y === expenditureYear) unmet += withdraw(expenditureAmt, false);
-
+ 
       unmet += withdraw(halfNeeded, !badYear);     // up year: shield funds the back half
-
+ 
       const total = Math.max(0, port + cash);
       path.push(total);
       if (y === checkpointYr) bal83.push(total);
-
+ 
       if ((unmet > 0 || total <= 0) && !failed) {
         failed = true; failures++; failureYears[y]++; realSpendEnd.push(curSpend / cumInf);
         if (y < 5) earlyFail++;
@@ -826,7 +826,7 @@ function runMC(p) {
     while (path.length < years) path.push(path[path.length - 1] || 0);
     for (let y = 0; y < years; y++) yearSamples[y].push(path[y]);
   }
-
+ 
   return {
     successRate: ((iters - failures) / iters) * 100,
     medianFinal: pct(yearSamples[years - 1], 0.50),
@@ -843,7 +843,7 @@ function runMC(p) {
     failureYears, iters, failures,
   };
 }
-
+ 
 // ── Scenario builder ───────────────────────────────────────────────────────
 function buildScenarios() {
   const simYears = Math.max(S.spouseAge, S.primaryAge) - S.pivotAge + 1;
@@ -899,7 +899,7 @@ function buildScenarios() {
     combined: { ...base, equityReturn: combinedReturn, spendAddon: pesoAddon, absorptionYear: S.absorptionOn ? S.absYr : 999, absorptionAmt: S.absAmt * 1000, taxRate: taxStressRate },
   };
 }
-
+ 
 // ── Run all scenarios ──────────────────────────────────────────────────────
 async function runAll() {
   const btn = document.getElementById('run-btn');
@@ -909,10 +909,10 @@ async function runAll() {
   btn.textContent = 'Simulating... 0%';
   pb.style.display = 'block';
   allResults = {};
-
+ 
   const scenarios = buildScenarios();
   const keys = Object.keys(scenarios);
-
+ 
   for (let i = 0; i < keys.length; i++) {
     const pct = Math.round((i / keys.length) * 100);
     btn.textContent = `Simulating... ${pct}%`;
@@ -920,48 +920,48 @@ async function runAll() {
     await new Promise(r => setTimeout(r, 10));
     allResults[keys[i]] = runMC(scenarios[keys[i]]);
   }
-
+ 
   pf.style.width = '100%';
   btn.disabled = false;
   btn.textContent = 'Run Simulation';
   pb.style.display = 'none';
-
+ 
   document.getElementById('empty-state').style.display = 'none';
   document.getElementById('results-area').style.display = 'block';
-
+ 
   renderResults();
   renderComparison();
 }
-
+ 
 // ── Render results for current scenario ───────────────────────────────────
 function renderResults() {
   const r = allResults[scenario];
   if (!r) return;
-
+ 
   const wr = (S.spend * 1000) / (S.portfolio * 1000);
   const ssYr = S.ssAge - S.pivotAge;
   const simYears = Math.max(S.spouseAge, S.primaryAge) - S.pivotAge + 1;
   const checkpointAge = S.primaryAge;
   const terminalAge = Math.max(S.spouseAge, S.primaryAge);
-
+ 
   // Update dynamic KPI labels
   document.getElementById('kpi-label-checkpoint').textContent = `Median at Age ${checkpointAge} (Primary)`;
   document.getElementById('kpi-label-terminal').textContent = `Median at Age ${terminalAge} (Terminal)`;
-
+ 
   // KPIs
   const kpiSuccess = document.getElementById('kpi-success');
   kpiSuccess.textContent = r.successRate.toFixed(1) + '%';
   kpiSuccess.style.color = pClass(r.successRate);
   document.getElementById('kpi-success-sub').textContent = `${r.failures.toLocaleString()} failures / 10,000`;
-
+ 
   document.getElementById('kpi-median93').textContent = fmt(r.medianFinal);
   document.getElementById('kpi-median93-sub').textContent = `P90: ${fmt(r.p90Final)} | P10: ${r.p10Final > 0 ? fmt(r.p10Final) : 'Depleted'}`;
-
+ 
   const km83 = document.getElementById('kpi-median83');
   km83.textContent = fmt(r.median83);
   km83.style.color = r.median83 > 1e6 ? 'var(--success)' : 'var(--accent)';
   document.getElementById('kpi-median83-sub').textContent = `Age ${checkpointAge} checkpoint / P10: ${fmt(r.p10_83)}`;
-
+ 
   const krs = document.getElementById('kpi-realspend');
   const rs = r.medianRealSpend || 0, startSpend = S.spend * 1000;
   const rsPct = startSpend > 0 ? (rs / startSpend) * 100 : 0;
@@ -969,25 +969,25 @@ function renderResults() {
   krs.style.color = rsPct >= 85 ? 'var(--success)' : rsPct >= 60 ? 'var(--accent)' : 'var(--danger)';
   document.getElementById('kpi-realspend-sub').textContent =
     `${rsPct.toFixed(0)}% of starting ${fmt(startSpend)} spend, in today's dollars`;
-
+ 
   const kpiEarly = document.getElementById('kpi-early');
   kpiEarly.textContent = r.earlyFailRate.toFixed(1) + '%';
   kpiEarly.style.color = r.earlyFailRate < 1 ? 'var(--success)' : r.earlyFailRate < 3 ? 'var(--accent)' : 'var(--danger)';
-
+ 
   // Fan label
   document.getElementById('fan-label').textContent =
     `Portfolio Fan — ${SCENARIO_NAMES[scenario]} — P10 / Median / P90 | Gold dashed: SS @ ${S.ssAge} | Blue dashed: Age ${checkpointAge}`;
-
+ 
   // Charts
   drawFan(r.p10, r.p50, r.p90, ssYr, simYears, S.pivotAge, S.primaryAge, S.spouseAge);
   drawHist(r.failureYears, simYears, S.pivotAge);
-
+ 
   // Findings
   document.getElementById('findings-title').textContent = `Key Findings — ${SCENARIO_NAMES[scenario]}`;
   const presWR = (wr * (1 + S.gkHigh / 100) * 100).toFixed(2);
   const prosWR = (wr * (1 - S.gkLow / 100) * 100).toFixed(2);
   const effWR = (((S.spend - S.ssB) * 1000) / (S.portfolio * 1000) * 100).toFixed(2);
-
+ 
   const rows = [
     ["Initial Withdrawal Rate", `${(wr * 100).toFixed(2)}%`, 'var(--accent)'],
     ["Net WR (after supplemental)", `${(Math.max(0, S.spend - S.suppIncome) / S.portfolio * 100).toFixed(2)}%`, S.suppIncome > 0 ? 'var(--success)' : 'var(--accent)'],
@@ -1009,12 +1009,12 @@ function renderResults() {
     rows.push(["Peso Shock", S.pesoOn ? `${S.pesoShock}% MXN strengthen` : 'Disabled (USD scenario)', S.pesoOn ? 'var(--accent)' : 'var(--muted)']);
   if (scenario === 'tax')
     rows.push(["Tax Stress Rate", `${(Math.min((S.taxRate + S.stateTax) / 100 + 0.10, 0.35) * 100).toFixed(1)}% total gross-up`, 'var(--danger)']);
-
+ 
   document.getElementById('findings-rows').innerHTML = rows.map(([k, v, c]) =>
     `<div class="finding-row"><span class="finding-key">${k}</span><span class="finding-val" style="color:${c}">${v}</span></div>`
   ).join('');
 }
-
+ 
 // ── Render scenario comparison ─────────────────────────────────────────────
 function renderComparison() {
   const area = document.getElementById('comparison-area');
@@ -1033,13 +1033,13 @@ function renderComparison() {
     </div>`;
   }).join('');
 }
-
+ 
 function setScenario(k) {
   scenario = k;
   document.querySelectorAll('.scenario-tab').forEach(b => b.classList.toggle('active', b.dataset.scenario === k));
   if (allResults[k]) { renderResults(); renderComparison(); }
 }
-
+ 
 // ── Canvas: Fan chart ──────────────────────────────────────────────────────
 function drawFan(p10, p50, p90, ssYear, years = 50, pivotAge = 44, justinAge = 83, sarahAge = 93) {
   const cv = document.getElementById('fan-canvas');
@@ -1058,7 +1058,7 @@ function drawFan(p10, p50, p90, ssYear, years = 50, pivotAge = 44, justinAge = 8
   const xp = i => pad.l + (i / Math.max(years - 1, 1)) * w;
   const yp = v => pad.t + h - Math.min(1, Math.max(0, v / maxV)) * h;
   const textColor = '#e8eaf0';
-
+ 
   // Y-axis gridlines and labels
   [0, 0.25, 0.5, 0.75, 1].forEach(f => {
     const v = f * maxV, y = yp(v);
@@ -1068,14 +1068,14 @@ function drawFan(p10, p50, p90, ssYear, years = 50, pivotAge = 44, justinAge = 8
     const label = v >= 1e6 ? '$' + (v/1e6).toFixed(1)+'M' : '$' + Math.round(v/1000)+'k';
     ctx.fillText(label, pad.l - 6, y + fs * 0.4);
   });
-
+ 
   // Vertical markers
   const markers = [
     { yr: ssYear, color: 'rgba(200,167,106,0.5)', label: 'SS@'+(pivotAge+ssYear), lc: '#c8a76a' },
     { yr: justinAge - pivotAge, color: 'rgba(74,158,255,0.4)', label: 'Primary@'+justinAge, lc: '#6ab4ff' },
     { yr: sarahAge - pivotAge, color: 'rgba(76,175,125,0.4)', label: 'Spouse@'+sarahAge, lc: '#4caf7d' },
   ].filter(m => m.yr >= 0 && m.yr < years);
-
+ 
   markers.forEach(({ yr, color, label, lc }) => {
     const x = xp(yr);
     ctx.strokeStyle = color; ctx.lineWidth = 1; ctx.setLineDash([4, 5]);
@@ -1085,7 +1085,7 @@ function drawFan(p10, p50, p90, ssYear, years = 50, pivotAge = 44, justinAge = 8
     ctx.font = `bold ${Math.max(10, fs - 2)}px monospace`;
     ctx.fillText(label, Math.min(Math.max(x, pad.l + 30), pad.l + w - 30), pad.t + h + Math.round(28 * dpr));
   });
-
+ 
   // X-axis labels
   ctx.fillStyle = textColor; ctx.textAlign = 'center'; ctx.font = `${fs}px monospace`;
   const termAge = pivotAge + years - 1;
@@ -1096,20 +1096,20 @@ function drawFan(p10, p50, p90, ssYear, years = 50, pivotAge = 44, justinAge = 8
   if ((termAge - pivotAge) % xStep !== 0) ctx.fillText(termAge, xp(years-1), pad.t + h + Math.round(16 * dpr));
   ctx.fillStyle = '#8090a8'; ctx.font = `${Math.max(9, fs-2)}px monospace`;
   ctx.fillText('Age', pad.l + w/2, H - Math.round(3 * dpr));
-
+ 
   // Fan fill
   ctx.beginPath(); ctx.moveTo(xp(0), yp(p10[0]));
   for (let i = 1; i < years; i++) ctx.lineTo(xp(i), yp(p10[i]));
   for (let i = years-1; i >= 0; i--) ctx.lineTo(xp(i), yp(p90[i]));
   ctx.closePath(); ctx.fillStyle = 'rgba(74,158,255,0.07)'; ctx.fill();
-
+ 
   // Lines
   [[p90,'#4a9eff',2],[p10,'rgba(220,79,79,0.85)',2],[p50,'#c8a76a',2.5]].forEach(([data,stroke,lw]) => {
     ctx.beginPath(); ctx.moveTo(xp(0), yp(data[0]));
     for (let i = 1; i < years; i++) ctx.lineTo(xp(i), yp(data[i]));
     ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke();
   });
-
+ 
   // Legend — top-left, inside chart area, with background
   const items = [['#c8a76a','Median (P50)'],['#4a9eff','P90 — best 10%'],['rgba(220,79,79,0.9)','P10 — worst 10%']];
   const rowH = Math.round(fs * 1.8);
@@ -1126,7 +1126,7 @@ function drawFan(p10, p50, p90, ssYear, years = 50, pivotAge = 44, justinAge = 8
     ctx.fillText(label, lgX + 28, y + fs * 0.35);
   });
 }
-
+ 
 // ── Canvas: Histogram ──────────────────────────────────────────────────────
 function drawHist(failureYears, years = 50, pivotAge = 44) {
   const cv = document.getElementById('hist-canvas');
@@ -1141,7 +1141,7 @@ function drawHist(failureYears, years = 50, pivotAge = 44) {
   const bw = w / years;
   const fs = Math.round(10 * W / 900);
   const textColor = '#e8eaf0';
-
+ 
   [0, 0.5, 1].forEach(f => {
     const v = Math.round(f * maxF), y = pad.t + h - f * h;
     ctx.strokeStyle = '#1c1e24'; ctx.lineWidth = 1;
@@ -1149,14 +1149,14 @@ function drawHist(failureYears, years = 50, pivotAge = 44) {
     ctx.fillStyle = textColor; ctx.font = `${fs}px monospace`; ctx.textAlign = 'right';
     ctx.fillText(v, pad.l - 4, y + 4);
   });
-
+ 
   failureYears.forEach((f, i) => {
     if (!f) return;
     const bh = (f / maxF) * h;
     ctx.fillStyle = `rgba(220,79,79,${0.3 + (f / maxF) * 0.6})`;
     ctx.fillRect(pad.l + i * bw + 1, pad.t + h - bh, bw - 2, bh);
   });
-
+ 
   const terminalAgeH = pivotAge + years - 1;
   const stepH = years <= 30 ? 5 : 10;
   ctx.fillStyle = textColor; ctx.font = `${fs}px monospace`; ctx.textAlign = 'center';
@@ -1167,21 +1167,21 @@ function drawHist(failureYears, years = 50, pivotAge = 44) {
   ctx.fillStyle = '#8090a8'; ctx.font = `${fs - 1}px monospace`;
   ctx.fillText('Age', pad.l + w / 2, H - 2);
 }
-
+ 
 // ── Scenario Manager ──────────────────────────────────────────────────────
 const SCENARIO_STORAGE_KEY = 'mc_retirement_scenarios_demo';
-
+ 
 function getSavedScenarios() {
   try {
     const raw = localStorage.getItem(SCENARIO_STORAGE_KEY);
     return raw ? JSON.parse(raw) : {};
   } catch(e) { return {}; }
 }
-
+ 
 function persistScenarios(scenarios) {
   try { localStorage.setItem(SCENARIO_STORAGE_KEY, JSON.stringify(scenarios)); } catch(e) {}
 }
-
+ 
 function saveScenario() {
   const nameEl = document.getElementById('scenario-name-input');
   const name = nameEl.value.trim();
@@ -1199,7 +1199,7 @@ function saveScenario() {
   nameEl.value = '';
   renderSavedList();
 }
-
+ 
 function loadScenario(name) {
   const scenarios = getSavedScenarios();
   const saved = scenarios[name];
@@ -1244,14 +1244,14 @@ function loadScenario(name) {
   document.getElementById('results-area').style.display = 'none';
   document.getElementById('empty-state').style.display = 'block';
 }
-
+ 
 function deleteScenario(name) {
   const scenarios = getSavedScenarios();
   delete scenarios[name];
   persistScenarios(scenarios);
   renderSavedList();
 }
-
+ 
 function exportScenarios() {
   const scenarios = getSavedScenarios();
   const blob = new Blob([JSON.stringify(scenarios, null, 2)], { type: 'application/json' });
@@ -1260,7 +1260,7 @@ function exportScenarios() {
   a.download = 'mc_retirement_scenarios_demo.json';
   a.click();
 }
-
+ 
 function renderSavedList() {
   const scenarios = getSavedScenarios();
   const list = document.getElementById('saved-list');
@@ -1290,7 +1290,7 @@ function renderSavedList() {
     list.appendChild(div);
   });
 }
-
+ 
 // ── Toggle handlers ────────────────────────────────────────────────────────
 function toggleCoreIndexed() {
   S.coreIndexed = document.getElementById('tog-coreIndexed').checked;
@@ -1299,7 +1299,7 @@ function toggleCoreIndexed() {
     : 'Nominal — floor never rises (inflates away; flatters results)';
   updateGKNote();
 }
-
+ 
 function toggleWindfall() {
   S.windfallOn = document.getElementById('tog-windfall').checked;
   const inputs = document.getElementById('windfall-inputs');
@@ -1308,7 +1308,7 @@ function toggleWindfall() {
     ? `On — $${S.windfallAmt}k at Age ${S.windfallAge}`
     : 'Off — no windfall event';
 }
-
+ 
 function toggleExpenditure() {
   S.expenditureOn = document.getElementById('tog-expenditure').checked;
   const inputs = document.getElementById('expenditure-inputs');
@@ -1317,7 +1317,7 @@ function toggleExpenditure() {
     ? `On — $${S.expenditureAmt}k at Age ${S.expenditureAge}`
     : 'Off — no large expenditure';
 }
-
+ 
 function toggleAbsorption() {
   S.absorptionOn = document.getElementById('tog-absorption').checked;
   const inputs = document.getElementById('absorption-inputs');
@@ -1327,7 +1327,7 @@ function toggleAbsorption() {
     : 'Off — no parental cost absorption';
   updateHeaderStats();
 }
-
+ 
 function toggleMortgage() {
   S.mortgageOn = document.getElementById('tog-mortgage').checked;
   const inputs = document.getElementById('mortgage-inputs');
@@ -1337,7 +1337,7 @@ function toggleMortgage() {
     : 'Off — no mortgage liability';
   updateHeaderStats();
 }
-
+ 
 function updatePesoToggle() {
   S.pesoOn = document.getElementById('tog-peso').checked;
   const wrap = document.getElementById('peso-slider-wrap');
@@ -1346,7 +1346,7 @@ function updatePesoToggle() {
     ? 'On — Mexico currency risk active'
     : 'Off — USD-only (Farmington / SD)';
 }
-
+ 
 // Cash shield can never exceed the total portfolio. Keep the shield slider's
 // ceiling pinned to the current portfolio value and clamp if the portfolio drops.
 function syncShieldMax() {
@@ -1360,7 +1360,7 @@ function syncShieldMax() {
   const sd = document.getElementById('dv-shield');
   if (sd) sd.textContent = `${fmtKM(S.shield)} cash / ${fmtKM(S.portfolio - S.shield)} invested`;
 }
-
+ 
 // ── Slider wiring ──────────────────────────────────────────────────────────
 function wireSliders() {
   const sliders = [
@@ -1409,7 +1409,7 @@ function wireSliders() {
     ['mortPITI',  v => { S.mortPITI = v; return `$${parseInt(v).toLocaleString()}/mo`; }],
     ['mortYrs',   v => { S.mortYrs = parseInt(v); return `${parseInt(v)} mo (payoff Age ${S.pivotAge + Math.round(parseInt(v)/12)})`; }],
   ];
-
+ 
   sliders.forEach(([key, fn]) => {
     const el = document.getElementById(`sl-${key}`);
     const dv = document.getElementById(`dv-${key}`);
@@ -1422,7 +1422,7 @@ function wireSliders() {
     });
   });
 }
-
+ 
 function updateHeaderStats() {
   const wr = (S.spend * 1000) / (S.portfolio * 1000);
   const netDraw = Math.max(0, S.spend - S.suppIncome);
@@ -1450,7 +1450,7 @@ function updateHeaderStats() {
   document.getElementById('hs-horizon').textContent = `${simYears} yrs (Age ${S.pivotAge}–${termAge})`;
   document.getElementById('hs-ss').textContent = `$${S.ssB}k @ Age ${S.ssAge}`;
 }
-
+ 
 function updateGKNote() {
   // Show the anchor on the same gross-of-tax, mortgage-inclusive basis the engine uses,
   // so the displayed trigger points match the ones that actually fire.
@@ -1468,7 +1468,7 @@ function updateGKNote() {
   const gb = document.getElementById('gk-basis');
   if (gb) gb.textContent = S.coreIndexed ? '(real, inflation-indexed)' : '(NOMINAL — decays with inflation)';
 }
-
+ 
 // ── Section toggles ────────────────────────────────────────────────────────
 function toggleSection(id) {
   const body = document.getElementById(`body-${id}`);
@@ -1476,12 +1476,12 @@ function toggleSection(id) {
   body.classList.toggle('open');
   arr.classList.toggle('open');
 }
-
+ 
 // ── Scenario tab clicks ────────────────────────────────────────────────────
 document.querySelectorAll('.scenario-tab').forEach(btn => {
   btn.addEventListener('click', () => setScenario(btn.dataset.scenario));
 });
-
+ 
 // ── Init ───────────────────────────────────────────────────────────────────
 // Every control is driven from the S object below, so a preset variant of this
 // file only has to change S -- the markup never needs to be kept in sync by hand.
@@ -1490,7 +1490,7 @@ const ALL_SLIDER_KEYS = ['portfolio','spend','suppIncome','shield','cashYield','
   'bondR','bondSD','inf','infSD','ssB','ssAge','ssCola','gkHigh','gkLow','gkCut','gkUp',
   'pesoShock','med1','med2','absYr','absAmt','taxRate','stateTax','mortPITI','mortYrs',
   'windfallAge','windfallAmt','expenditureAge','expenditureAmt'];
-
+ 
 function syncAllFromState() {
   syncShieldMax();
   ALL_SLIDER_KEYS.forEach(k => {
@@ -1507,7 +1507,7 @@ function syncAllFromState() {
   updateHeaderStats();
   updateGKNote();
 }
-
+ 
 // ── Solvency regression guard ──────────────────────────────────────────────
 // The v12 fix corrected an engine defect that reported 100% success for an
 // all-cash portfolio that was certain to fail. This runs that exact pathological
@@ -1564,7 +1564,7 @@ function runSolvencySelfTest() {
     console[ok ? 'log' : 'error']('[MC] self-tests', ok ? 'PASS' : 'FAIL', 'solvency', r.successRate.toFixed(2) + '%', 'realfloor', r2.successRate.toFixed(2) + '%', 'nocut', (r3.medianRealSpend/1000).toFixed(1) + 'k');
   } catch (e) { console.error('[MC] self-test error', e); }
 }
-
+ 
 wireSliders();
 syncAllFromState();
 renderSavedList();
